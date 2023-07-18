@@ -1,27 +1,26 @@
-import Head from 'next/head';
-import AppLayout from '../components/AppLayout';
-import { colors } from '../styles/theme';
-import Button from '../components/Button';
-import GitHub from '../components/Icons/GitHub';
-import {loginWithGitHub, authStateChanged} from "../firebase/client"
-import { useEffect, useState } from 'react';
+import Head from 'next/head'
+import AppLayout from '../components/AppLayout'
+import { colors } from '../styles/theme'
+import Button from '../components/Button'
+import GitHub from '../components/Icons/GitHub'
+import { loginWithGitHub, authStateChanged } from '../firebase/client'
+import { useEffect, useState } from 'react'
 
-export default function Home() {
-  
-  const [user, setUser]=useState(undefined)
+export default function Home () {
+  const [user, setUser] = useState(undefined)
 
-  useEffect(()=>{
-    authStateChanged(user=>setUser(user))
-  },[])
+  useEffect(() => {
+    authStateChanged(user => setUser(user))
+  }, [])
 
-  const handleClick = ()=>{
-    loginWithGitHub().then(user=>{
-      const {avatar, email, name} = user
+  const handleClick = () => {
+    loginWithGitHub().then(user => {
+      const { avatar, email, name } = user
       setUser(user)
       // console.log(user);
     })
   }
-  const onChange = (user)=>{
+  const onChange = (user) => {
     setUser(user)
   }
 

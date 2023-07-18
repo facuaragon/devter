@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from 'react'
 
 const GitHub = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" width={50} height={50} viewBox="0 0 98 96" {...props}>
@@ -8,6 +8,6 @@ const GitHub = (props) => (
       clipRule="evenodd"
     />
   </svg>
-);
+)
 
-export default GitHub;
+export default GitHub
