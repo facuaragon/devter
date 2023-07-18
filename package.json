@@ -4,7 +4,8 @@
     "dev": "next dev",
     "build": "next build",
     "lint": "eslint . --fix",
-    "start": "next start"
+    "start": "next start",
+    "prepare": "husky install"
   },
   "dependencies": {
     "firebase": "^10.0.0",
@@ -21,5 +22,9 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.32.2",
     "prettier": "^3.0.0"
+  },
+  "lint-staged": {
+    "*.js": "eslint --cache --fix",
+    "*.{js,css,md}": "prettier --write"
   }
 }
