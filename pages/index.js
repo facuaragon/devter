@@ -6,6 +6,7 @@ import GitHub from "components/Icons/GitHub"
 import { loginWithGitHub, authStateChanged } from "../firebase/client"
 import { useEffect, useState } from "react"
 import Avatar from "components/Avatar"
+import Logo from "components/Icons/Logo"
 
 export default function Home() {
   const [user, setUser] = useState(undefined)
@@ -28,7 +29,7 @@ export default function Home() {
       </Head>
       <AppLayout>
         <section>
-          <img src="/dev-logo.png" alt="Logo" />
+          <Logo width="100" />
           <h1>Devter</h1>
           <h2>
             Talk about development
@@ -65,12 +66,13 @@ export default function Home() {
           place-items: center;
         }
         h1 {
-          color: ${colors.secondary};
+          color: ${colors.primary};
           font-weight: 800;
+          font-size: 32px;
           margin-bottom: 16px;
         }
         h2 {
-          color: ${colors.primary};
+          color: ${colors.secondary};
           font-size: 21px;
           margin: 0;
         }

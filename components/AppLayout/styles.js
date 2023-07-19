@@ -34,13 +34,13 @@ export default css`
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     height: 100%;
     width: 100%;
+    position: relative;
   }
   /* mobile only */
   @media (min-width: ${breakpoints.mobile}) {
     main {
       height: 90vh;
-      width: 100%;
-      max-width: ${breakpoints.mobile};
+      width: ${breakpoints.mobile};
     }
   }
 `
