@@ -5,6 +5,8 @@ import {
   addDoc,
   Timestamp,
   getDocs,
+  orderBy,
+  query,
 } from "firebase/firestore"
 import {
   getAuth,
@@ -12,6 +14,12 @@ import {
   signInWithPopup,
   onAuthStateChanged,
 } from "firebase/auth"
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage"
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -22,10 +30,12 @@ const firebaseConfig = {
   messagingSenderId: "270633502622",
   appId: "1:270633502622:web:d1988be9b53e1ba042b88f",
   measurementId: "G-51X6GXTL2Q",
+  // storageBucket: "gs://devter-30d46.appspot.com",
 }
 
 const app = initializeApp(firebaseConfig)
 const db = getFirestore(app)
+const storage = getStorage(app)
 
 const mapUserFromFirebaseAuthToUser = (user) => {
   const { displayName, photoURL, email, uid } = user
@@ -78,7 +88,7 @@ export const authStateChanged = (onChange) => {
   })
 }
 
-export const addDevit = async ({ avatar, content, userId, userName }) => {
+export const addDevit = async ({ avatar, content, userId, userName, img }) => {
   try {
     await addDoc(collection(db, "devits"), {
       avatar,
@@ -88,6 +98,7 @@ export const addDevit = async ({ avatar, content, userId, userName }) => {
       createdAt: Timestamp.fromDate(new Date()),
       likesCount: 0,
       sharedCount: 0,
+      img,
     })
     return true
   } catch (e) {
@@ -97,21 +108,20 @@ export const addDevit = async ({ avatar, content, userId, userName }) => {
 }
 
 export const fetchLatestDevits = () => {
-  return getDocs(collection(db, "devits"))
+  const devitsRefs = collection(db, "devits")
+  const q = query(devitsRefs, orderBy("createdAt", "desc"))
+
+  return getDocs(q)
     .then((querySnapshot) => {
       const devits = []
       querySnapshot.forEach((doc) => {
         const data = doc.data()
         const id = doc.id
         const { createdAt } = data
-        const date = new Date(createdAt.seconds * 1000)
-        const normalizedCreatedAt = new Intl.DateTimeFormat("es-ES").format(
-          date,
-        )
         devits.push({
           ...data,
           id,
-          createdAt: normalizedCreatedAt,
+          createdAt: +createdAt.toDate(),
         })
       })
       return devits
@@ -119,20 +129,56 @@ export const fetchLatestDevits = () => {
     .catch((e) => {
       console.error(e)
     })
-  // try {
-  //   const querySnapshot = await getDocs(collection(db, "devits"))
-  //   return querySnapshot.docs.map((doc) => {
-  //     const data = doc.data()
-  //     const id = doc.id
-  //     // const { createdAt } = data
-  //     // const normalizedCreatedAt = new Date(createdAt.seconds).toString
-  //     return {
-  //       ...data,
-  //       id,
-  //       // createdAt: normalizedCreatedAt,
-  //     }
-  //   })
-  // } catch (e) {
-  //   console.error(e)
-  // }
+}
+
+export const uploadImage = (file) => {
+  return new Promise((resolve, reject) => {
+    const metadata = {
+      contentType: "image/jpeg",
+    }
+    const storageRef = ref(storage, `images/${file.name}`)
+    const uploadTask = uploadBytesResumable(storageRef, file, metadata)
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        console.log("Upload is " + progress + "% done")
+        switch (snapshot.state) {
+          case "paused":
+            console.log("Upload is paused")
+            break
+          case "running":
+            console.log("Upload is running")
+            break
+        }
+      },
+      (error) => {
+        // A full list of error codes is available at
+        // https://firebase.google.com/docs/storage/web/handle-errors
+        switch (error.code) {
+          case "storage/unauthorized":
+            // User doesn't have permission to access the object
+            break
+          case "storage/canceled":
+            // User canceled the upload
+            break
+
+          // ...
+
+          case "storage/unknown":
+            // Unknown error occurred, inspect error.serverResponse
+            break
+        }
+      },
+      () => {
+        // Upload completed successfully, now we can get the download URL
+        getDownloadURL(uploadTask.snapshot.ref)
+          .then((downloadURL) => {
+            resolve(downloadURL)
+          })
+          .catch((e) => reject(e))
+      },
+    )
+  })
 }

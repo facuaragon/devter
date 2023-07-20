@@ -1,4 +1,5 @@
 import Avatar from "components/Avatar"
+import useTimeAgo from "hooks/useTimeAgo"
 export default function Devit({
   avatar,
   content,
@@ -8,7 +9,9 @@ export default function Devit({
   sharedCount,
   userId,
   userName,
+  img,
 }) {
+  const timeago = useTimeAgo(createdAt)
   return (
     <>
       <article key={id}>
@@ -18,9 +21,14 @@ export default function Devit({
         <section>
           <header>
             <strong>{userName}</strong>
-            <span> · {createdAt}</span>
+            <span> · {timeago}</span>
           </header>
           <p>{content}</p>
+          {img && (
+            <div className="img-container">
+              <img src={img} />
+            </div>
+          )}
         </section>
       </article>
       <style jsx>{`
@@ -31,6 +39,23 @@ export default function Devit({
           display: flex;
           padding: 10px 15px;
           border-bottom: 1px solid #eee;
+        }
+        .img-container {
+          max-width: 100%;
+          max-height: 400px;
+          margin-top: 10px;
+          overflow: hidden;
+        }
+        .img-container img {
+          max-width: 100%;
+          max-height: 400px;
+          object-fit: cover;
+          display: block;
+        }
+        img {
+          height: auto;
+          width: auto;
+          border-radius: 10px;
         }
         p {
           line-height: 1.3125;
