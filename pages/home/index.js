@@ -1,4 +1,3 @@
-import AppLayout from "components/AppLayout"
 import { useEffect, useState } from "react"
 import Devit from "components/Devit"
 import useUser from "hooks/useUser"
@@ -9,9 +8,11 @@ import Home from "components/Icons/Home"
 import Search from "components/Icons/Search"
 import { colors } from "styles/theme"
 import Head from "next/head"
+import Compose from "components/Compose"
 
 export default function HomePage() {
   const [timeline, setTimeline] = useState([])
+  const [counter, setCounter] = useState(0)
   const user = useUser()
   useEffect(() => {
     user &&
@@ -20,67 +21,70 @@ export default function HomePage() {
         .catch((e) => {
           console.log(e)
         })
-  }, [user])
+  }, [user, counter])
+
+  const reloadHome = () => {
+    setCounter(counter + 1)
+  }
 
   return (
     <>
-      <AppLayout>
-        <Head>
-          <title>Inicio / Devter</title>
-        </Head>
-        <div>
-          <header>
-            <h2>Inicio</h2>
-          </header>
-          <section>
-            {timeline?.map(
-              ({
-                avatar,
-                content,
-                createdAt,
-                id,
-                likesCount,
-                sharedCount,
-                userId,
-                userName,
-                img,
-              }) => {
-                return (
-                  <Devit
-                    key={id}
-                    id={id}
-                    avatar={avatar}
-                    userName={userName}
-                    content={content}
-                    createdAt={createdAt}
-                    likesCount={likesCount}
-                    sharedCount={sharedCount}
-                    userId={userId}
-                    img={img}
-                  />
-                )
-              },
-            )}
-          </section>
-          <nav>
-            <div className="button">
-              <Link href="/home">
-                <Home width={32} height={32} stroke="#09f" className="link" />
-              </Link>
-            </div>
-            <div className="button">
-              <Link href="/search">
-                <Search width={32} height={32} stroke="#09f" />
-              </Link>
-            </div>
-            <div className="button">
-              <Link href="/compose/tweet">
-                <Create width={32} height={32} stroke="#09f" />
-              </Link>
-            </div>
-          </nav>
-        </div>
-      </AppLayout>
+      <Head>
+        <title>Inicio / Devter</title>
+      </Head>
+      <div>
+        <header>
+          <h2>Inicio</h2>
+        </header>
+        <Compose reloadHome={reloadHome} />
+        <section>
+          {timeline?.map(
+            ({
+              avatar,
+              content,
+              createdAt,
+              id,
+              likesCount,
+              sharedCount,
+              userId,
+              userName,
+              img,
+            }) => {
+              return (
+                <Devit
+                  key={id}
+                  id={id}
+                  avatar={avatar}
+                  userName={userName}
+                  content={content}
+                  createdAt={createdAt}
+                  likesCount={likesCount}
+                  sharedCount={sharedCount}
+                  userId={userId}
+                  img={img}
+                />
+              )
+            },
+          )}
+        </section>
+        <nav>
+          <div className="button">
+            <Link href="/home">
+              <Home width={32} height={32} stroke="#09f" className="link" />
+            </Link>
+          </div>
+          <div className="button">
+            <Link href="/search">
+              <Search width={32} height={32} stroke="#09f" />
+            </Link>
+          </div>
+          <div className="button">
+            <Link href="/compose/tweet">
+              <Create width={32} height={32} stroke="#09f" />
+            </Link>
+          </div>
+        </nav>
+      </div>
       <style jsx>{`
         header {
           display: flex;
@@ -107,6 +111,7 @@ export default function HomePage() {
           padding-top: 5px;
           min-height: 80vh;
           flex: 1;
+          max-width: 100%;
         }
         nav {
           background: #fff;
