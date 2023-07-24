@@ -23,16 +23,16 @@ import {
 } from "firebase/storage"
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyA8N1NDFWYcAkFUK6kUON07p36A9gUCSf8",
-  authDomain: "devter-30d46.firebaseapp.com",
-  projectId: "devter-30d46",
-  storageBucket: "devter-30d46.appspot.com",
-  messagingSenderId: "270633502622",
-  appId: "1:270633502622:web:d1988be9b53e1ba042b88f",
-  measurementId: "G-51X6GXTL2Q",
-  // storageBucket: "gs://devter-30d46.appspot.com",
-}
+// const firebaseConfig = {
+//   apiKey: "AIzaSyA8N1NDFWYcAkFUK6kUON07p36A9gUCSf8",
+//   authDomain: "devter-30d46.firebaseapp.com",
+//   projectId: "devter-30d46",
+//   storageBucket: "devter-30d46.appspot.com",
+//   messagingSenderId: "270633502622",
+//   appId: "1:270633502622:web:d1988be9b53e1ba042b88f",
+//   measurementId: "G-51X6GXTL2Q",
+// }
+const firebaseConfig = JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG)
 
 const app = initializeApp(firebaseConfig)
 const db = getFirestore(app)
