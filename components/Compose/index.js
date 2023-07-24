@@ -20,7 +20,7 @@ const DRAG_IMAGES_STATES = {
   COMPLETE: 3,
 }
 
-export default function Compose({ reloadHome }) {
+export default function Compose() {
   const router = useRouter()
   const user = useUser()
   const [message, setMessage] = useState("")
@@ -56,7 +56,8 @@ export default function Compose({ reloadHome }) {
     })
     post ? setStatus(COMPOSE_STATES.SUCCESS) : setStatus(COMPOSE_STATES.ERROR)
     post && setMessage("")
-    currentURL !== "/home" ? router.push("/home") : reloadHome()
+    currentURL !== "/home" && router.push("/home")
+    setImgURL(null)
   }
 
   const handleDragEnter = (e) => {

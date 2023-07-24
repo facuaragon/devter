@@ -7,6 +7,7 @@ import {
   getDocs,
   orderBy,
   query,
+  onSnapshot,
 } from "firebase/firestore"
 import {
   getAuth,
@@ -105,6 +106,24 @@ export const addDevit = async ({ avatar, content, userId, userName, img }) => {
     console.error("Error adding devit: ", e)
     return false
   }
+}
+
+export const listenLatestDevits = (callback) => {
+  const q = query(collection(db, "devits"), orderBy("createdAt", "desc"))
+  return onSnapshot(q, (querySnapshot) => {
+    const devits = []
+    querySnapshot.forEach((doc) => {
+      const data = doc.data()
+      const id = doc.id
+      const { createdAt } = data
+      devits.push({
+        ...data,
+        id,
+        createdAt: +createdAt.toDate(),
+      })
+    })
+    callback(devits)
+  })
 }
 
 export const fetchLatestDevits = () => {

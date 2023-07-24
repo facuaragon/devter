@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import Devit from "components/Devit"
 import useUser from "hooks/useUser"
-import { fetchLatestDevits } from "../../firebase/client"
+import { listenLatestDevits } from "../../firebase/client"
 import Link from "next/link"
 import Create from "components/Icons/Create"
 import Home from "components/Icons/Home"
@@ -12,20 +12,17 @@ import Compose from "components/Compose"
 
 export default function HomePage() {
   const [timeline, setTimeline] = useState([])
-  const [counter, setCounter] = useState(0)
   const user = useUser()
   useEffect(() => {
-    user &&
-      fetchLatestDevits()
-        .then((devits) => setTimeline(devits))
-        .catch((e) => {
-          console.log(e)
-        })
-  }, [user, counter])
-
-  const reloadHome = () => {
-    setCounter(counter + 1)
-  }
+    let unsuscribe
+    if (user) {
+      unsuscribe = listenLatestDevits((devits) => {
+        setTimeline(devits)
+      })
+    }
+    // console.log(timeline)
+    return () => unsuscribe && unsuscribe()
+  }, [user])
 
   return (
     <>
@@ -36,7 +33,7 @@ export default function HomePage() {
         <header>
           <h2>Inicio</h2>
         </header>
-        <Compose reloadHome={reloadHome} />
+        <Compose />
         <section>
           {timeline?.map(
             ({
