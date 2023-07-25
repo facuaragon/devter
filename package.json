@@ -4,8 +4,7 @@
     "dev": "next dev",
     "build": "next build",
     "lint": "eslint . --fix",
-    "start": "next start",
-    "prepare": "husky install"
+    "start": "next start"
   },
   "dependencies": {
     "firebase": "^10.0.0",
